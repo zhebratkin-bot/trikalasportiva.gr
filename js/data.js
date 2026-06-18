@@ -1,6 +1,7 @@
 const sportsNewsData = [
   {
     id: 1,
+    authorId: 1,
     category: "football",
     categoryName: "Ποδόσφαιρο",
     title: "Μεγάλη νίκη για τον Α.Ο. Τρίκαλα στο τοπικό ντέρμπι με κυριαρχική εμφάνιση",
@@ -18,6 +19,7 @@ const sportsNewsData = [
   },
   {
     id: 2,
+    authorId: 2,
     category: "basketball",
     categoryName: "Μπάσκετ",
     title: "Θρίλερ στα Τρίκαλα: Νίκη στο τελευταίο δευτερόλεπτο για τα Τρίκαλα Basket",
@@ -35,6 +37,7 @@ const sportsNewsData = [
   },
   {
     id: 3,
+    authorId: 3,
     category: "volleyball",
     categoryName: "Βόλεϊ",
     title: "Εντυπωσιακό ξεκίνημα για τον Α.Σ. Ασκληπιό Τρικάλων στο πρωτάθλημα βόλεϊ",
@@ -51,6 +54,7 @@ const sportsNewsData = [
   },
   {
     id: 4,
+    authorId: 4,
     category: "othersports",
     categoryName: "Άλλα Αθλήματα",
     title: "Μεγάλη επιτυχία του Τρικαλινού ποδηλατικού ομίλου στον Γύρο Θεσσαλίας",
@@ -67,6 +71,7 @@ const sportsNewsData = [
   },
   {
     id: 5,
+    authorId: 3,
     category: "football",
     categoryName: "Ποδόσφαιρο",
     title: "Νέες μεταγραφικές κινήσεις για την ενίσχυση του ρόστερ του Α.Ο. Τρίκαλα",
@@ -83,6 +88,7 @@ const sportsNewsData = [
   },
   {
     id: 6,
+    authorId: 2,
     category: "basketball",
     categoryName: "Μπάσκετ",
     title: "Υποδομές Μπάσκετ στα Τρίκαλα: Το μέλλον του αθλήματος είναι εδώ",
@@ -99,6 +105,7 @@ const sportsNewsData = [
   },
   {
     id: 7,
+    authorId: 4,
     category: "volleyball",
     categoryName: "Βόλεϊ",
     title: "Φιλικός αγώνας προετοιμασίας για την ανδρική ομάδα βόλεϊ των Τρικάλων",
@@ -115,6 +122,7 @@ const sportsNewsData = [
   },
   {
     id: 8,
+    authorId: 1,
     category: "othersports",
     categoryName: "Άλλα Αθλήματα",
     title: "Διασυλλογικό Πρωτάθλημα Στίβου στο Δημοτικό Στάδιο Τρικάλων",
@@ -131,6 +139,7 @@ const sportsNewsData = [
   },
   {
     id: 9,
+    authorId: 1,
     category: "football",
     categoryName: "Ποδόσφαιρο",
     title: "Συνέντευξη με τον αρχηγό του Α.Ο. Τρίκαλα: «Παίζουμε για τη φανέλα και την πόλη μας»",
@@ -147,6 +156,7 @@ const sportsNewsData = [
   },
   {
     id: 10,
+    authorId: 2,
     category: "basketball",
     categoryName: "Μπάσκετ",
     title: "Τα Τρίκαλα Basket στηρίζουν το Ειδικό Σχολείο της πόλης με φιλανθρωπική δράση",
@@ -163,6 +173,7 @@ const sportsNewsData = [
   },
   {
     id: 11,
+    authorId: 4,
     category: "volleyball",
     categoryName: "Βόλεϊ",
     title: "Beach Volleyball Tournament στα Τρίκαλα αυτό το Σαββατοκύριακο",
@@ -179,6 +190,7 @@ const sportsNewsData = [
   },
   {
     id: 12,
+    authorId: 3,
     category: "othersports",
     categoryName: "Άλλα Αθλήματα",
     title: "Ανάπτυξη του Τένις στα Τρίκαλα: Νέα γήπεδα και αυξημένο ενδιαφέρον",
@@ -192,6 +204,162 @@ const sportsNewsData = [
       <p>«Βλέπουμε παιδιά από 5 ετών μέχρι βετεράνους 70 ετών να απολαμβάνουν το παιχνίδι. Το τένις προσφέρει υγεία και κοινωνικοποίηση», ανέφερε εκπρόσωπος του ομίλου αντισφαίρισης.</p>
     `,
     tags: ["#TennisTrikala", "#Antisfairisi", "#SportsTrikala", "#OtherSports"]
+  },
+  {
+    id: 13,
+    authorId: 1,
+    category: "football",
+    categoryName: "Ποδόσφαιρο",
+    title: "Φιλική νίκη και θετικά συμπεράσματα για τον Α.Ο. Τρίκαλα στην προετοιμασία",
+    date: "9 Ιουνίου 2026",
+    dateIso: "2026-06-09",
+    image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=800",
+    excerpt: "Σε ρυθμούς προετοιμασίας ο Α.Ο. Τρίκαλα πήρε μια άνετη φιλική νίκη, με τον προπονητή να δοκιμάζει αρκετά νεαρά παιδιά από τις ακαδημίες.",
+    content: `
+      <p>Συνεχίζεται με εντατικούς ρυθμούς η προετοιμασία του Α.Ο. Τρίκαλα ενόψει της νέας σεζόν. Στο τελευταίο φιλικό παιχνίδι, η ομάδα έδειξε καλά στοιχεία στο επιθετικό κομμάτι και επικράτησε με ευρύ σκορ.</p>
+      <p>Ο προπονητής έδωσε χρόνο συμμετοχής σε αρκετούς νεαρούς ποδοσφαιριστές από τις υποδομές, δηλώνοντας ικανοποιημένος από την εικόνα και τη διάθεση των παικτών του.</p>
+    `,
+    tags: ["#AOTrikala", "#Podosfairo", "#Filika", "#Trikala"]
+  },
+  {
+    id: 14,
+    authorId: 3,
+    category: "football",
+    categoryName: "Ποδόσφαιρο",
+    title: "Ανανέωσε ο αρχηγός: Παραμένει στα «κυανέρυθρα» για δύο ακόμη χρόνια",
+    date: "8 Ιουνίου 2026",
+    dateIso: "2026-06-08",
+    image: "https://images.unsplash.com/photo-1540747737956-378724044432?auto=format&fit=crop&q=80&w=800",
+    excerpt: "Ο έμπειρος αμυντικός και αρχηγός της ομάδας έβαλε την υπογραφή του για δύο ακόμη χρόνια, δίνοντας ψήφο εμπιστοσύνης στο πλάνο της διοίκησης.",
+    content: `
+      <p>Σε μια κίνηση που ενισχύει τη σταθερότητα στα αποδυτήρια, ο αρχηγός του Α.Ο. Τρίκαλα ανανέωσε τη συνεργασία του με τον σύλλογο για δύο ακόμη αγωνιστικές περιόδους.</p>
+      <p>«Είμαι περήφανος που φοράω αυτή τη φανέλα. Θα παλέψουμε όλοι μαζί για τους στόχους μας», δήλωσε ο παίκτης μετά την υπογραφή του συμβολαίου.</p>
+    `,
+    tags: ["#AOTrikala", "#Ananeosi", "#Podosfairo", "#Trikala"]
+  },
+  {
+    id: 15,
+    authorId: 1,
+    category: "football",
+    categoryName: "Ποδόσφαιρο",
+    title: "Νεανικό τμήμα Α.Ο. Τρίκαλα: Πρόκριση στους ημιτελικούς του περιφερειακού",
+    date: "7 Ιουνίου 2026",
+    dateIso: "2026-06-07",
+    image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=800",
+    excerpt: "Σπουδαία επιτυχία για τις ακαδημίες των Τρικάλων, που εξασφάλισαν την πρόκρισή τους στα ημιτελικά του περιφερειακού πρωταθλήματος νέων.",
+    content: `
+      <p>Το νεανικό τμήμα του Α.Ο. Τρίκαλα συνεχίζει να γράφει τη δική του ιστορία, παίρνοντας την πρόκριση στους ημιτελικούς μετά από μια εξαιρετική εμφάνιση.</p>
+      <p>Η επένδυση του συλλόγου στις υποδομές αρχίζει να αποδίδει καρπούς, με αρκετά ταλέντα να χτυπούν την πόρτα της πρώτης ομάδας.</p>
+    `,
+    tags: ["#AOTrikala", "#Akadimies", "#Podosfairo", "#Trikala"]
+  },
+  {
+    id: 16,
+    authorId: 3,
+    category: "football",
+    categoryName: "Ποδόσφαιρο",
+    title: "Δηλώσεις προπονητή ενόψει του κρίσιμου εκτός έδρας αγώνα",
+    date: "6 Ιουνίου 2026",
+    dateIso: "2026-06-06",
+    image: "https://images.unsplash.com/photo-1540747737956-378724044432?auto=format&fit=crop&q=80&w=800",
+    excerpt: "Ο τεχνικός των Τρικάλων αναφέρθηκε στη δυσκολία της αναμέτρησης και ζήτησε από τους φιλάθλους να βρεθούν στο πλευρό της ομάδας.",
+    content: `
+      <p>Σε συνέντευξη Τύπου, ο προπονητής του Α.Ο. Τρίκαλα στάθηκε στη σημασία του επόμενου εκτός έδρας αγώνα, τονίζοντας ότι η ομάδα πρέπει να παραμείνει συγκεντρωμένη.</p>
+      <p>«Ξέρουμε τι μας περιμένει. Με σοβαρότητα και πάθος μπορούμε να φύγουμε με το θετικό αποτέλεσμα», ανέφερε χαρακτηριστικά.</p>
+    `,
+    tags: ["#AOTrikala", "#Diloseis", "#Podosfairo", "#Trikala"]
+  },
+  {
+    id: 17,
+    authorId: 2,
+    category: "basketball",
+    categoryName: "Μπάσκετ",
+    title: "Τρίκαλα Basket: Ξεκίνησε η διάθεση των εισιτηρίων διαρκείας",
+    date: "5 Ιουνίου 2026",
+    dateIso: "2026-06-05",
+    image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&q=80&w=800",
+    excerpt: "Η ΚΑΕ ανακοίνωσε την έναρξη της διάθεσης των εισιτηρίων διαρκείας για τη νέα σεζόν, με ειδικές τιμές για νέους και φοιτητές.",
+    content: `
+      <p>Τα Τρίκαλα Basket καλούν τον κόσμο να ανανεώσει τη σχέση του με την ομάδα, ανακοινώνοντας το πρόγραμμα διάθεσης εισιτηρίων διαρκείας για τη νέα αγωνιστική περίοδο.</p>
+      <p>Η διοίκηση υπόσχεται μια δυνατή ομάδα και καλεί τους φιλάθλους να γεμίσουν ξανά το κλειστό γυμναστήριο της πόλης.</p>
+    `,
+    tags: ["#TrikalaBasket", "#Eisitiria", "#BasketballGR", "#Trikala"]
+  },
+  {
+    id: 18,
+    authorId: 4,
+    category: "volleyball",
+    categoryName: "Βόλεϊ",
+    title: "Ασκληπιός: Νέα μεταγραφική προσθήκη στη γυναικεία ομάδα βόλεϊ",
+    date: "4 Ιουνίου 2026",
+    dateIso: "2026-06-04",
+    image: "https://images.unsplash.com/photo-1592656094267-764a45028526?auto=format&fit=crop&q=80&w=800",
+    excerpt: "Με μια έμπειρη κεντρική ενισχύεται ο Ασκληπιός Τρικάλων, που στοχεύει στην άνοδο κατηγορίας τη νέα σεζόν.",
+    content: `
+      <p>Ο Α.Σ. Ασκληπιός Τρικάλων ανακοίνωσε την απόκτηση μιας έμπειρης αθλήτριας, που έρχεται να προσθέσει ποιότητα και εμπειρία στη γυναικεία ομάδα βόλεϊ.</p>
+      <p>Η νέα μεταγραφή δήλωσε ενθουσιασμένη για τη συνεργασία και έτοιμη να βοηθήσει την ομάδα στους φιλόδοξους στόχους της.</p>
+    `,
+    tags: ["#AsklipiosVolley", "#Metagrafi", "#VoleyGR", "#Trikala"]
+  },
+  {
+    id: 19,
+    authorId: 4,
+    category: "othersports",
+    categoryName: "Άλλα Αθλήματα",
+    title: "Κολυμβητικός Όμιλος Τρικάλων: Μετάλλια και διακρίσεις στους περιφερειακούς αγώνες",
+    date: "3 Ιουνίου 2026",
+    dateIso: "2026-06-03",
+    image: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&q=80&w=800",
+    excerpt: "Οι νεαροί κολυμβητές των Τρικάλων επέστρεψαν με πλούσια συγκομιδή μεταλλίων από τους περιφερειακούς αγώνες κολύμβησης.",
+    content: `
+      <p>Εξαιρετική παρουσία πραγματοποίησαν οι αθλητές του Κολυμβητικού Ομίλου Τρικάλων στους περιφερειακούς αγώνες, κατακτώντας αρκετά μετάλλια σε διάφορες κατηγορίες.</p>
+      <p>Οι προπονητές του συλλόγου εξέφρασαν την ικανοποίησή τους για τη συνεχή πρόοδο των μικρών αθλητών και τη σκληρή δουλειά που γίνεται καθημερινά.</p>
+    `,
+    tags: ["#Kolimvisi", "#TrikalaSwimming", "#OtherSports", "#Trikala"]
+  },
+];
+
+// Authors collection (used for the author template & schema.org author markup)
+const sportsAuthors = [
+  {
+    id: 1,
+    slug: "giorgos-papadopoulos",
+    name: "Γιώργος Παπαδόπουλος",
+    role: "Αρχισυντάκτης",
+    avatar: "https://i.pravatar.cc/160?img=12",
+    bio: "Αθλητικογράφος με πάνω από 15 χρόνια εμπειρίας στα τοπικά αθλητικά δρώμενα των Τρικάλων. Ειδικεύεται στην κάλυψη ποδοσφαίρου και στις αναλύσεις αγώνων.",
+    facebook: "https://www.facebook.com/",
+    twitter: "https://twitter.com/"
+  },
+  {
+    id: 2,
+    slug: "maria-oikonomou",
+    name: "Μαρία Οικονόμου",
+    role: "Δημοσιογράφος",
+    avatar: "https://i.pravatar.cc/160?img=45",
+    bio: "Καλύπτει μπάσκετ και βόλεϊ για το trikalasportiva.gr. Παθιασμένη με τα αθλήματα κλειστού και τις ιστορίες των τοπικών ομάδων.",
+    facebook: "https://www.facebook.com/",
+    twitter: "https://twitter.com/"
+  },
+  {
+    id: 3,
+    slug: "dimitris-athanasiou",
+    name: "Δημήτρης Αθανασίου",
+    role: "Συντάκτης",
+    avatar: "https://i.pravatar.cc/160?img=33",
+    bio: "Ρεπόρτερ ποδοσφαίρου και ερασιτεχνικού αθλητισμού. Βρίσκεται κάθε Σαββατοκύριακο στα γήπεδα της περιοχής.",
+    facebook: "https://www.facebook.com/",
+    twitter: "https://twitter.com/"
+  },
+  {
+    id: 4,
+    slug: "eleni-karagianni",
+    name: "Ελένη Καραγιάννη",
+    role: "Ρεπόρτερ",
+    avatar: "https://i.pravatar.cc/160?img=47",
+    bio: "Δημοσιογράφος με έμφαση στο βόλεϊ, τον στίβο και τα ατομικά αθλήματα. Παρακολουθεί από κοντά την ανάπτυξη των αθλητικών υποδομών στα Τρίκαλα.",
+    facebook: "https://www.facebook.com/",
+    twitter: "https://twitter.com/"
   }
 ];
 
@@ -224,5 +392,13 @@ const sportsNewsStore = {
   getLatestNewsExceptHero: (limit = 6) => {
     const sorted = sportsNewsStore.getAll();
     return sorted.slice(4, 4 + limit);
-  }
+  },
+
+  getAuthorById: (id) => sportsAuthors.find(a => a.id === parseInt(id)),
+
+  getAuthorBySlug: (slug) => sportsAuthors.find(a => a.slug === slug),
+
+  getByAuthor: (authorId) => sportsNewsData
+    .filter(item => item.authorId === parseInt(authorId))
+    .sort((a, b) => new Date(b.dateIso) - new Date(a.dateIso))
 };

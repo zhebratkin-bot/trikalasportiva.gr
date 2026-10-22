@@ -248,35 +248,179 @@
 
     <section class="section" aria-labelledby="calc-title">
       <div class="container">
-        <div class="calc" data-calc>
-          <div class="calc__intro">
-            <h2 id="calc-title" class="calc__title">Πόσο «κοστίζει» πραγματικά ένα μπόνους;</h2>
-            <p>Βάλτε το ποσό του μπόνους και την απαίτηση στοιχηματισμού. Ο υπολογιστής δείχνει τι τζίρο χρειάζεστε και πόσα χάνει κατά μέσο όρο ένας παίκτης μέχρι να τον ολοκληρώσει.</p>
+        <div class="bc" data-bcalc data-preset="olympia-spins">
+          <div class="bc-head">
+            <h2 id="calc-title" class="bc-title">Υπολογίστε την αξία του μπόνους</h2>
+            <p class="bc-intro">Ένας υπολογιστής για κάθε τύπο προσφοράς. Λαμβάνει υπόψη στοιχηματισμό, συνεισφορά παιχνιδιών, RTP, όριο ανάληψης και μέγιστο πόνταρισμα, και δείχνει τι αξίζει πραγματικά το μπόνους.</p>
           </div>
-          <div class="calc__form">
-            <label class="calc__field">
-              <span class="calc__label">Ποσό μπόνους</span>
-              <span class="calc__input"><input type="number" inputmode="decimal" min="0" max="5000" step="10" value="100" data-calc-bonus><b>€</b></span>
-            </label>
-            <label class="calc__field">
-              <span class="calc__label">Στοιχηματισμός <output data-calc-wager-out>35x</output></span>
-              <input type="range" min="0" max="60" step="1" value="35" data-calc-wager>
-            </label>
-            <label class="calc__field">
-              <span class="calc__label">Μέσο RTP παιχνιδιών</span>
-              <select data-calc-rtp>
-                <option value="0.94">94% (χαμηλό)</option>
-                <option value="0.96" selected>96% (τυπικά φρουτάκια)</option>
-                <option value="0.98">98% (blackjack)</option>
-              </select>
-            </label>
+
+          <div class="bc-tabs" role="tablist" aria-label="Τύπος μπόνους"><button type="button" role="tab" class="bc-tab" id="bc-tab-deposit" data-type="deposit" aria-selected="true" aria-controls="bc-panel">Μπόνους κατάθεσης</button><button type="button" role="tab" class="bc-tab" id="bc-tab-nodep" data-type="nodep" aria-selected="false" aria-controls="bc-panel">Χωρίς κατάθεση</button><button type="button" role="tab" class="bc-tab" id="bc-tab-spins" data-type="spins" aria-selected="false" aria-controls="bc-panel">Δωρεάν περιστροφές</button><button type="button" role="tab" class="bc-tab" id="bc-tab-cashback" data-type="cashback" aria-selected="false" aria-controls="bc-panel">Cashback</button></div>
+
+          <div class="bc-body" id="bc-panel" role="tabpanel" aria-labelledby="bc-tab-deposit">
+            <form class="bc-form" novalidate onsubmit="return false">
+              <label class="bc-field bc-field--wide">
+                <span class="bc-label">Συμπλήρωση από καζίνο της λίστας</span>
+                <select name="preset" class="bc-select">
+                  <option value="">Δικοί μου όροι</option>
+                  <option value="olympia-spins">Olympia Spins: 100% έως 500€ + 200 δωρεάν περιστροφές</option><option value="meteora-casino">Meteora Casino: 150% έως 300€</option><option value="aegean-royal">Aegean Royal: 50 δωρεάν περιστροφές χωρίς στοιχηματισμό</option><option value="pindos-play">Pindos Play: 10% cashback κάθε εβδομάδα</option><option value="lethaios-bet">Lethaios Bet: 100% έως 200€</option>
+                </select>
+              </label>
+
+              <fieldset class="bc-group">
+                <legend>Η προσφορά</legend>
+              <label class="bc-field" data-show="deposit">
+                <span class="bc-label">Κατάθεση</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="deposit" value="100" min="0" step="5"><b>€</b></span>
+              </label>
+
+              <label class="bc-field" data-show="deposit">
+                <span class="bc-label">Ποσοστό μπόνους</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="match" value="100" min="0" max="1000" step="5"><b>%</b></span>
+              </label>
+
+              <label class="bc-field" data-show="deposit">
+                <span class="bc-label">Μέγιστο μπόνους</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="bonusCap" value="500" min="0" step="10"><b>€</b></span><small class="bc-hint">0 = χωρίς όριο</small>
+              </label>
+
+              <label class="bc-field" data-show="nodep">
+                <span class="bc-label">Ποσό μπόνους</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="bonus" value="10" min="0" step="1"><b>€</b></span>
+              </label>
+
+              <label class="bc-field" data-show="spins">
+                <span class="bc-label">Αριθμός περιστροφών</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="spins" value="50" min="0" step="5"><b></b></span>
+              </label>
+
+              <label class="bc-field" data-show="spins">
+                <span class="bc-label">Αξία περιστροφής</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="spinValue" value="0.2" min="0" step="0.05"><b>€</b></span>
+              </label>
+
+              <label class="bc-field" data-show="cashback">
+                <span class="bc-label">Καθαρές απώλειες περιόδου</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="losses" value="300" min="0" step="10"><b>€</b></span><small class="bc-hint">Πόσα θα χάνατε έτσι κι αλλιώς</small>
+              </label>
+
+              <label class="bc-field" data-show="cashback">
+                <span class="bc-label">Ποσοστό cashback</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="cbRate" value="10" min="0" max="100" step="1"><b>%</b></span>
+              </label>
+
+              <label class="bc-field" data-show="cashback">
+                <span class="bc-label">Μέγιστο cashback</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="cbCap" value="200" min="0" step="10"><b>€</b></span><small class="bc-hint">0 = χωρίς όριο</small>
+              </label>
+
+              </fieldset>
+
+              <fieldset class="bc-group">
+                <legend>Στοιχηματισμός</legend>
+                <label class="bc-field bc-field--wide">
+                  <span class="bc-label">Απαίτηση στοιχηματισμού <output data-out="wager">35x</output></span>
+                  <input type="range" name="wager" min="0" max="70" step="1" value="35" class="bc-range">
+                  <small class="bc-hint">0x = χωρίς στοιχηματισμό</small>
+                </label>
+                <div class="bc-field bc-field--wide" data-show="deposit">
+                  <span class="bc-label" id="bc-base-label">Ο στοιχηματισμός ισχύει για</span>
+                  <div class="bc-seg" role="radiogroup" aria-labelledby="bc-base-label">
+                    <label><input type="radio" name="base" value="b" checked><span>Μόνο το μπόνους</span></label>
+                    <label><input type="radio" name="base" value="db"><span>Κατάθεση + μπόνους</span></label>
+                  </div>
+                </div>
+                <label class="bc-field bc-field--wide">
+                  <span class="bc-label">Πού θα παίξετε τον τζίρο</span>
+                  <select name="game" class="bc-select">
+                    <option value="slots" selected>Φρουτάκια (συνεισφορά 100%, RTP 96%)</option>
+                    <option value="table">Επιτραπέζια RNG (10%, RTP 99%)</option>
+                    <option value="live">Live καζίνο (10%, RTP 98,5%)</option>
+                    <option value="poker">Βίντεο πόκερ (20%, RTP 98%)</option>
+                  </select>
+                </label>
+              </fieldset>
+
+              <details class="bc-adv">
+                <summary>Προχωρημένες ρυθμίσεις</summary>
+                <div class="bc-adv__grid">
+              <label class="bc-field" data-show="all">
+                <span class="bc-label">Συνεισφορά παιχνιδιού</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="contrib" value="100" min="0" max="100" step="5"><b>%</b></span>
+              </label>
+
+              <label class="bc-field" data-show="all">
+                <span class="bc-label">RTP παιχνιδιού</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="rtp" value="96" min="80" max="99.9" step="0.1"><b>%</b></span>
+              </label>
+
+              <label class="bc-field" data-show="all">
+                <span class="bc-label">Μέσο πόνταρισμα</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="bet" value="1" min="0.1" step="0.1"><b>€</b></span>
+              </label>
+
+              <label class="bc-field" data-show="deposit nodep spins">
+                <span class="bc-label">Μέγιστο επιτρεπτό πόνταρισμα</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="maxBet" value="5" min="0" step="0.5"><b>€</b></span><small class="bc-hint">0 = χωρίς όριο</small>
+              </label>
+
+              <label class="bc-field" data-show="deposit nodep spins">
+                <span class="bc-label">Μέγιστο ποσό ανάληψης</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="maxWin" value="0" min="0" step="10"><b>€</b></span><small class="bc-hint">0 = χωρίς όριο</small>
+              </label>
+
+              <label class="bc-field" data-show="deposit nodep spins cashback">
+                <span class="bc-label">Προθεσμία στοιχηματισμού</span>
+                <span class="bc-input"><input type="number" inputmode="decimal" name="days" value="30" min="0" step="1"><b>ημέρες</b></span><small class="bc-hint">0 = χωρίς προθεσμία</small>
+              </label>
+
+                </div>
+              </details>
+            </form>
+
+            <div class="bc-result" aria-live="polite">
+              <div class="bc-verdict" data-verdict>
+                <span class="bc-verdict__label" data-r="verdict">—</span>
+                <span class="bc-verdict__ev" data-r="ev">—</span>
+                <span class="bc-verdict__cap">Αναμενόμενη αξία της προσφοράς</span>
+              </div>
+
+              <div class="bc-meter">
+                <div class="bc-meter__top"><span>Δυσκολία ολοκλήρωσης</span><strong data-r="difficulty">—</strong></div>
+                <div class="bc-meter__track"><span class="bc-meter__fill" data-r="meter"></span></div>
+              </div>
+
+              <dl class="bc-rows">
+                <div><dt data-r="nominalLabel">Ονομαστική αξία μπόνους</dt><dd data-r="nominal">—</dd></div>
+                <div><dt>Απαιτούμενος τζίρος</dt><dd data-r="turnover">—</dd></div>
+                <div><dt>Πραγματικά πονταρίσματα</dt><dd data-r="real">—</dd></div>
+                <div><dt>Μέση απώλεια στον τζίρο</dt><dd data-r="loss" class="is-neg">—</dd></div>
+                <div><dt>Αριθμός πονταρισμάτων</dt><dd data-r="bets">—</dd></div>
+                <div><dt>Χρόνος παιχνιδιού</dt><dd data-r="time">—</dd></div>
+                <div data-row="perday"><dt>Τζίρος ανά ημέρα</dt><dd data-r="perday">—</dd></div>
+                <div data-row="net"><dt>Απώλεια μετά το cashback</dt><dd data-r="net">—</dd></div>
+              </dl>
+
+              <p class="bc-explain" data-r="explain"></p>
+              <ul class="bc-warn" data-r="warnings"></ul>
+
+              <button type="button" class="btn btn--ghost bc-add" data-add>Προσθήκη στη σύγκριση</button>
+            </div>
           </div>
-          <div class="calc__result" aria-live="polite">
-            <div class="calc__stat"><span>Απαιτούμενος τζίρος</span><strong data-calc-turnover>—</strong></div>
-            <div class="calc__stat calc__stat--warn"><span>Μέση αναμενόμενη απώλεια</span><strong data-calc-loss>—</strong></div>
-            <div class="calc__stat" data-calc-value-box><span>Αναμενόμενη αξία μπόνους</span><strong data-calc-value>—</strong></div>
+
+          <div class="bc-compare" data-compare hidden>
+            <div class="bc-compare__head">
+              <h3>Σύγκριση προσφορών</h3>
+              <button type="button" class="link-btn" data-clear>Καθαρισμός</button>
+            </div>
+            <div class="table-wrap">
+              <table class="bc-table">
+                <thead><tr><th scope="col">Προσφορά</th><th scope="col">Μπόνους</th><th scope="col">Πραγματικός τζίρος</th><th scope="col">Δυσκολία</th><th scope="col">Αναμ. αξία</th><th scope="col"><span class="visually-hidden">Αφαίρεση</span></th></tr></thead>
+                <tbody data-compare-body></tbody>
+              </table>
+            </div>
           </div>
-          <p class="calc__note">Μαθηματικός μέσος όρος, όχι πρόβλεψη: κάθε συνεδρία έχει διαφορετικό αποτέλεσμα. Παίζετε μόνο με χρήματα που μπορείτε να χάσετε.</p>
+
+          <p class="bc-note">Τα αποτελέσματα είναι μαθηματικοί μέσοι όροι και όχι πρόβλεψη: κάθε συνεδρία έχει διαφορετικό αποτέλεσμα. Ελέγχετε πάντα τους πλήρεις όρους της προσφοράς. Παίζετε μόνο με χρήματα που μπορείτε να χάσετε.</p>
         </div>
       </div>
     </section>
@@ -332,6 +476,7 @@
               <li><a href="index.html">Online καζίνο</a></li>
               <li><a href="category.html">Live καζίνο</a></li>
               <li><a href="review.html">Κριτική Olympia Spins</a></li>
+              <li><a href="calculator.html">Υπολογιστής μπόνους</a></li>
             </ul>
           </nav>
           <nav class="footer-menu" aria-labelledby="fm-sport">

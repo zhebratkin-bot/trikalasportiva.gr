@@ -2,27 +2,87 @@
 (function () {
   'use strict';
 
-  /* ---------- Burger menu ---------- */
-  function initBurger() {
-    var btn = document.querySelector('.burger');
+  /* ---------- Navigation: burger drawer + dropdown (mega) menus ---------- */
+  function initNav() {
+    var header = document.querySelector('.site-header');
+    var burger = document.querySelector('.burger');
     var nav = document.getElementById('main-nav');
-    if (!btn || !nav) return;
+    if (!header || !nav) return;
+    var triggers = nav.querySelectorAll('.nav-trigger');
+    var desktop = window.matchMedia('(min-width: 992px)');
+    var canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+    var closeTimer = null;
 
-    function setOpen(open) {
-      btn.setAttribute('aria-expanded', String(open));
-      btn.setAttribute('aria-label', open ? 'Κλείσιμο μενού' : 'Άνοιγμα μενού');
+    function setDrawer(open) {
+      if (!burger) return;
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Κλείσιμο μενού' : 'Άνοιγμα μενού');
       nav.classList.toggle('is-open', open);
+      document.body.classList.toggle('nav-open', open);
+      if (!open) closeAll();
+    }
+    function closeAll(except) {
+      triggers.forEach(function (t) { if (t !== except) t.setAttribute('aria-expanded', 'false'); });
+      header.classList.toggle('has-open', !!except && desktop.matches);
+    }
+    function open(t) {
+      clearTimeout(closeTimer);
+      if (t.getAttribute('aria-expanded') !== 'true') t._openedAt = Date.now();
+      closeAll(t);
+      t.setAttribute('aria-expanded', 'true');
+    }
+    function toggle(t) {
+      if (t.getAttribute('aria-expanded') === 'true') { t.setAttribute('aria-expanded', 'false'); header.classList.remove('has-open'); }
+      else open(t);
     }
 
-    btn.addEventListener('click', function () {
-      setOpen(btn.getAttribute('aria-expanded') !== 'true');
+    if (burger) burger.addEventListener('click', function () { setDrawer(burger.getAttribute('aria-expanded') !== 'true'); });
+
+    triggers.forEach(function (t) {
+      var item = t.parentElement;
+      t.addEventListener('click', function () {
+        // A click right after hover-open should not immediately close the panel
+        if (t.getAttribute('aria-expanded') === 'true' && Date.now() - (t._openedAt || 0) < 500) return;
+        toggle(t);
+      });
+      // Hover-intent on desktop mice only; touch and keyboard use click
+      item.addEventListener('mouseenter', function () { if (desktop.matches && canHover.matches) open(t); });
+      item.addEventListener('mouseleave', function () {
+        if (!desktop.matches || !canHover.matches) return;
+        closeTimer = setTimeout(function () { t.setAttribute('aria-expanded', 'false'); header.classList.remove('has-open'); }, 180);
+      });
+      t.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown' && desktop.matches) {
+          e.preventDefault(); open(t);
+          var first = item.querySelector('.mega a'); if (first) first.focus();
+        }
+      });
     });
+
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') setOpen(false);
+      if (e.key !== 'Escape') return;
+      var opened = nav.querySelector('.nav-trigger[aria-expanded="true"]');
+      if (opened) { opened.setAttribute('aria-expanded', 'false'); header.classList.remove('has-open'); opened.focus(); }
+      else if (nav.classList.contains('is-open')) { setDrawer(false); burger.focus(); }
+    });
+    document.addEventListener('click', function (e) {
+      if (desktop.matches && !e.target.closest('.main-nav')) closeAll();
+    });
+    // Close desktop dropdown when focus leaves it
+    nav.addEventListener('focusout', function (e) {
+      if (desktop.matches && !nav.contains(e.relatedTarget)) closeAll();
     });
     nav.addEventListener('click', function (e) {
-      if (e.target.closest('a')) setOpen(false);
+      var a = e.target.closest('a');
+      if (a && a.getAttribute('href').indexOf('#') !== -1) setDrawer(false);
     });
+    var syncMq = function () { setDrawer(false); };
+    if (desktop.addEventListener) desktop.addEventListener('change', syncMq);
+
+    // Compact header after scrolling
+    var onScroll = function () { header.classList.toggle('is-scrolled', window.scrollY > 24); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
   }
 
   /* ---------- Slugify: Greek → Latin, kebab-case ---------- */
@@ -173,271 +233,6 @@
     });
   }
 
-  /* ---------- Universal bonus calculator ----------
-     Model (all values are long-run averages):
-       nominal   N  = value the offer gives you before conditions
-       turnover  T  = wagering multiplier × wagering base
-       real      R  = T / contribution        (what you actually have to stake)
-       loss      L  = R × (1 − RTP)           (house edge on that stake)
-       value     EV = N − L, then limited by: what you can lose (deposit), 0 for
-                     risk-free offers, and the max-cashout cap.
-  */
-  var GAMES = {
-    slots: { contrib: 100, rtp: 96, speed: 600, name: 'φρουτάκια' },
-    table: { contrib: 10, rtp: 99, speed: 120, name: 'επιτραπέζια' },
-    live: { contrib: 10, rtp: 98.5, speed: 60, name: 'live καζίνο' },
-    poker: { contrib: 20, rtp: 98, speed: 400, name: 'βίντεο πόκερ' }
-  };
-
-  // Mirrors the casino list. Update together with the cards.
-  var PRESETS = {
-    'olympia-spins': { type: 'deposit', deposit: 100, match: 100, bonusCap: 500, wager: 35, base: 'b', maxBet: 5, maxWin: 0, days: 30 },
-    'meteora-casino': { type: 'deposit', deposit: 100, match: 150, bonusCap: 300, wager: 40, base: 'b', maxBet: 5, maxWin: 0, days: 30 },
-    'aegean-royal': { type: 'spins', spins: 50, spinValue: 0.2, wager: 0, maxBet: 0, maxWin: 0, days: 7 },
-    'pindos-play': { type: 'cashback', losses: 300, cbRate: 10, cbCap: 200, wager: 0, days: 7 },
-    'lethaios-bet': { type: 'deposit', deposit: 100, match: 100, bonusCap: 200, wager: 30, base: 'b', maxBet: 5, maxWin: 0, days: 30 }
-  };
-
-  var eur = new Intl.NumberFormat('el-GR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
-  var eur2 = new Intl.NumberFormat('el-GR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  var num = new Intl.NumberFormat('el-GR', { maximumFractionDigits: 0 });
-  function money(v) { v = Math.round(v * 100) / 100; return Math.abs(v) < 100 && Math.round(v) !== v ? eur2.format(v) : eur.format(v); }
-  function signed(v) { return (v > 0.004 ? '+' : v < -0.004 ? '−' : '') + money(Math.abs(v)); }
-  function duration(h) {
-    if (h < 1) return Math.max(1, Math.round(h * 60)) + ' λεπτά';
-    if (h < 48) return (Math.round(h * 10) / 10).toString().replace('.', ',') + ' ώρες';
-    return num.format(Math.round(h / 24 * 10) / 10) + ' ημέρες συνεχούς παιχνιδιού';
-  }
-
-  function compute(type, v) {
-    var c = Math.max(0, Math.min(v.contrib, 100)) / 100;
-    var rtp = Math.max(0, Math.min(v.rtp, 100)) / 100;
-    var edge = 1 - rtp;
-    var r = { type: type, warnings: [] };
-
-    if (type === 'deposit') {
-      var raw = v.deposit * v.match / 100;
-      r.nominal = v.bonusCap > 0 ? Math.min(raw, v.bonusCap) : raw;
-      if (v.bonusCap > 0 && raw > v.bonusCap) r.warnings.push('Η κατάθεση ξεπερνά το μέγιστο μπόνους: τα πρώτα ' + money(v.bonusCap / (v.match / 100)) + ' αρκούν για ολόκληρο το μπόνους.');
-      r.base = v.base === 'db' ? v.deposit + r.nominal : r.nominal;
-      r.bankroll = v.deposit + r.nominal;
-      r.floor = -v.deposit;            // worst average case: you lose what you deposited
-      r.nominalLabel = 'Μπόνους που παίρνετε';
-    } else if (type === 'nodep') {
-      r.nominal = v.bonus; r.base = v.bonus; r.bankroll = v.bonus; r.floor = 0;
-      r.nominalLabel = 'Δωρεάν υπόλοιπο';
-    } else if (type === 'spins') {
-      var spinRtp = (GAMES.slots.rtp) / 100;  // spins are always played on a slot
-      r.spinStake = v.spins * v.spinValue;
-      r.nominal = r.spinStake * spinRtp;      // average winnings from the spins
-      r.base = r.nominal; r.bankroll = r.nominal; r.floor = 0;
-      r.nominalLabel = 'Μέσα κέρδη από ' + num.format(v.spins) + ' περιστροφές';
-      if (v.maxBet > 0 && v.spinValue > v.maxBet) r.warnings.push('Η αξία περιστροφής ξεπερνά το μέγιστο πόνταρισμα. Ελέγξτε τους όρους.');
-    } else { // cashback
-      var cbRaw = v.losses * v.cbRate / 100;
-      r.nominal = v.cbCap > 0 ? Math.min(cbRaw, v.cbCap) : cbRaw;
-      if (v.cbCap > 0 && cbRaw > v.cbCap) r.warnings.push('Το cashback φτάνει το ανώτατο όριο. Πάνω από ' + money(v.cbCap / (v.cbRate / 100)) + ' απώλειες δεν παίρνετε τίποτα επιπλέον.');
-      r.base = r.nominal; r.bankroll = r.nominal; r.floor = 0;
-      r.nominalLabel = 'Cashback που επιστρέφεται';
-    }
-
-    r.turnover = v.wager * r.base;
-    if (r.turnover > 0 && c === 0) {
-      r.blocked = true;
-      r.real = Infinity; r.loss = r.bankroll; r.ev = r.floor; r.ratio = Infinity;
-      r.warnings.unshift('Αυτό το παιχνίδι δεν μετράει στον στοιχηματισμό (συνεισφορά 0%). Το μπόνους δεν μπορεί να ολοκληρωθεί.');
-    } else {
-      r.real = c > 0 ? r.turnover / c : 0;
-      r.loss = r.real * edge;
-      r.ratio = r.bankroll > 0 ? r.loss / r.bankroll : 0;
-      var ev = r.nominal - r.loss;
-      if (ev < r.floor) ev = r.floor;
-      if (v.maxWin > 0 && type !== 'cashback' && ev > v.maxWin) {
-        ev = v.maxWin;
-        r.warnings.push('Το όριο ανάληψης ' + money(v.maxWin) + ' περιορίζει την αξία της προσφοράς.');
-      }
-      r.ev = ev;
-    }
-
-    var bet = Math.max(0.1, v.bet);
-    r.bets = isFinite(r.real) ? Math.ceil(r.real / bet) : Infinity;
-    r.hours = isFinite(r.real) ? r.bets / GAMES[v.game].speed : Infinity;
-    r.perDay = v.days > 0 && isFinite(r.real) ? r.real / v.days : null;
-
-    if (type !== 'cashback' && v.maxBet > 0 && bet > v.maxBet && r.turnover > 0) {
-      r.warnings.push('Το μέσο πόνταρισμά σας (' + money(bet) + ') ξεπερνά το επιτρεπτό ' + money(v.maxBet) + '. Το καζίνο μπορεί να ακυρώσει μπόνους και κέρδη.');
-    }
-    if (r.ratio >= 1 && isFinite(r.ratio)) r.warnings.push('Η μέση απώλεια ξεπερνά το διαθέσιμο υπόλοιπο: οι περισσότεροι παίκτες θα το χάσουν πριν ολοκληρώσουν τον τζίρο.');
-    if (r.perDay && r.hours / Math.max(v.days, 1) > 4) r.warnings.push('Για να προλάβετε την προθεσμία χρειάζονται πάνω από 4 ώρες παιχνιδιού την ημέρα.');
-    if (c < 1 && c > 0 && r.turnover > 0) r.warnings.push('Με συνεισφορά ' + Math.round(c * 100) + '% πρέπει να ποντάρετε ' + Math.round(1 / c) + ' φορές περισσότερα για τον ίδιο τζίρο.');
-    if (type === 'cashback') r.net = Math.max(0, v.losses - r.ev);
-
-    // Difficulty
-    if (r.turnover === 0) { r.diff = 'Χωρίς απαιτήσεις'; r.level = 0; }
-    else if (!isFinite(r.ratio) || r.ratio >= 1) { r.diff = 'Πολύ δύσκολο'; r.level = 4; }
-    else if (r.ratio >= 0.7) { r.diff = 'Δύσκολο'; r.level = 3; }
-    else if (r.ratio >= 0.3) { r.diff = 'Μέτριο'; r.level = 2; }
-    else { r.diff = 'Εύκολο'; r.level = 1; }
-
-    // Verdict
-    var rel = r.nominal > 0 ? r.ev / r.nominal : 0;
-    if (r.ev <= -0.5) { r.verdict = 'Αρνητική αξία'; r.tone = 'bad'; }
-    else if (r.ev < 0.5) { r.verdict = 'Σχεδόν μηδενική αξία'; r.tone = 'mid'; }
-    else if (rel >= 0.6) { r.verdict = 'Πολύ καλή αξία'; r.tone = 'good'; }
-    else { r.verdict = 'Θετική αλλά περιορισμένη αξία'; r.tone = 'ok'; }
-
-    // Plain-language explanation
-    var g = GAMES[v.game].name;
-    if (type === 'cashback' && r.turnover === 0) {
-      r.explain = 'Αν χάσετε ' + money(v.losses) + ', παίρνετε πίσω ' + money(r.nominal) + ' ως μετρητά. Το cashback μειώνει την απώλεια, δεν τη μετατρέπει σε κέρδος.';
-    } else if (r.turnover === 0) {
-      r.explain = 'Χωρίς στοιχηματισμό ό,τι κερδίσετε είναι μετρητά. Η μέση αξία είναι ' + money(Math.max(r.ev, 0)) + '.';
-    } else if (r.blocked) {
-      r.explain = 'Επιλέξτε παιχνίδι που μετράει στον στοιχηματισμό για να δείτε τον υπολογισμό.';
-    } else {
-      r.explain = 'Για ' + money(r.nominal) + ' πρέπει να ποντάρετε ' + money(r.real) + ' σε ' + g +
-        '. Με RTP ' + String(v.rtp).replace('.', ',') + '% ο μέσος παίκτης χάνει ' + money(r.loss) +
-        ' στη διαδρομή, άρα η αναμενόμενη αξία είναι ' + signed(r.ev) + '.';
-    }
-    return r;
-  }
-
-  function initBonusCalc() {
-    var root = document.querySelector('[data-bcalc]');
-    if (!root) return;
-    var form = root.querySelector('form');
-    var tabs = root.querySelectorAll('.bc-tab');
-    var panel = root.querySelector('[role="tabpanel"]');
-    var out = {};
-    root.querySelectorAll('[data-r]').forEach(function (el) { out[el.dataset.r] = el; });
-    var wagerOut = root.querySelector('[data-out="wager"]');
-    var range = form.elements.wager;
-    var compare = [];
-    var type = 'deposit';
-    var last = null;
-
-    function val(name) {
-      var el = form.elements[name];
-      var n = parseFloat(String(el.value).replace(',', '.'));
-      return isFinite(n) && n >= 0 ? n : 0;
-    }
-    function read() {
-      return {
-        deposit: val('deposit'), match: val('match'), bonusCap: val('bonusCap'), bonus: val('bonus'),
-        spins: val('spins'), spinValue: val('spinValue'), losses: val('losses'), cbRate: val('cbRate'), cbCap: val('cbCap'),
-        wager: val('wager'), base: form.querySelector('input[name="base"]:checked').value, game: form.elements.game.value,
-        contrib: val('contrib'), rtp: val('rtp'), bet: val('bet'), maxBet: val('maxBet'), maxWin: val('maxWin'), days: val('days')
-      };
-    }
-    function setType(t) {
-      type = t;
-      tabs.forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.type === t)); b.tabIndex = b.dataset.type === t ? 0 : -1; });
-      panel.setAttribute('aria-labelledby', 'bc-tab-' + t);
-      root.querySelectorAll('[data-show]').forEach(function (el) {
-        var show = el.dataset.show.split(' ');
-        el.hidden = show.indexOf('all') === -1 && show.indexOf(t) === -1;
-      });
-    }
-    function render() {
-      var v = read();
-      wagerOut.textContent = v.wager + 'x';
-      range.style.setProperty('--fill', (v.wager / range.max * 100) + '%');
-      var r = compute(type, v);
-      last = r;
-
-      out.verdict.textContent = r.verdict;
-      out.ev.textContent = signed(r.ev);
-      root.querySelector('[data-verdict]').dataset.tone = r.tone;
-      out.difficulty.textContent = r.diff;
-      out.meter.style.width = [4, 25, 55, 80, 100][r.level] + '%';
-      out.meter.dataset.level = r.level;
-      out.nominalLabel.textContent = r.nominalLabel;
-      out.nominal.textContent = money(r.nominal);
-      out.turnover.textContent = r.turnover ? money(r.turnover) : 'Δεν απαιτείται';
-      out.real.textContent = !isFinite(r.real) ? '∞' : r.real ? money(r.real) : '—';
-      out.loss.textContent = !isFinite(r.real) ? '—' : r.loss ? '−' + money(r.loss) : '0 €';
-      out.bets.textContent = !isFinite(r.bets) ? '∞' : r.bets ? '≈ ' + num.format(r.bets) + ' × ' + money(Math.max(0.1, v.bet)) : '—';
-      out.time.textContent = !isFinite(r.hours) ? '—' : r.hours ? '≈ ' + duration(r.hours) : '—';
-      root.querySelector('[data-row="perday"]').hidden = !(r.perDay && r.turnover);
-      if (r.perDay) out.perday.textContent = money(r.perDay) + ' (' + duration(r.hours / v.days) + ' / ημέρα)';
-      root.querySelector('[data-row="net"]').hidden = type !== 'cashback';
-      if (type === 'cashback') out.net.textContent = '−' + money(r.net) + ' αντί για −' + money(v.losses);
-      out.explain.textContent = r.explain;
-      out.warnings.innerHTML = '';
-      r.warnings.forEach(function (w) { var li = document.createElement('li'); li.textContent = w; out.warnings.appendChild(li); });
-    }
-    function applyGame(key) {
-      var g = GAMES[key];
-      form.elements.contrib.value = g.contrib;
-      form.elements.rtp.value = g.rtp;
-    }
-    function applyPreset(slug) {
-      var p = PRESETS[slug];
-      if (!p) return;
-      Object.keys(p).forEach(function (k) {
-        if (k === 'type') return;
-        if (k === 'base') { form.querySelector('input[name="base"][value="' + p.base + '"]').checked = true; return; }
-        if (form.elements[k]) form.elements[k].value = p[k];
-      });
-      form.elements.game.value = 'slots'; applyGame('slots');
-      setType(p.type);
-    }
-
-    tabs.forEach(function (b, i) {
-      b.addEventListener('click', function () { form.elements.preset.value = ''; setType(b.dataset.type); render(); });
-      b.addEventListener('keydown', function (e) {
-        var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-        if (!d) return;
-        var next = tabs[(i + d + tabs.length) % tabs.length];
-        next.focus(); next.click();
-      });
-    });
-    form.addEventListener('input', function (e) {
-      if (e.target.name === 'preset') { applyPreset(e.target.value); }
-      else if (e.target.name === 'game') { applyGame(e.target.value); }
-      else if (e.target.name !== 'bet' && e.target.name !== 'game') { /* manual edits keep preset label honest */ }
-      render();
-    });
-
-    // Comparison table
-    var cmpWrap = root.querySelector('[data-compare]');
-    var cmpBody = root.querySelector('[data-compare-body]');
-    var TYPE_NAMES = { deposit: 'Κατάθεσης', nodep: 'Χωρίς κατάθεση', spins: 'Περιστροφές', cashback: 'Cashback' };
-    function drawCompare() {
-      cmpWrap.hidden = compare.length === 0;
-      cmpBody.innerHTML = '';
-      var best = compare.reduce(function (m, x) { return Math.max(m, x.ev); }, -Infinity);
-      compare.forEach(function (x, i) {
-        var tr = document.createElement('tr');
-        if (compare.length > 1 && x.ev === best) tr.className = 'is-best';
-        tr.innerHTML = '<td><strong></strong><small></small></td><td></td><td></td><td></td><td class="ev"></td><td><button type="button" class="bc-x" aria-label="Αφαίρεση">×</button></td>';
-        tr.querySelector('strong').textContent = x.label;
-        tr.querySelector('small').textContent = TYPE_NAMES[x.type];
-        tr.children[1].textContent = money(x.nominal);
-        tr.children[2].textContent = isFinite(x.real) ? money(x.real) : '∞';
-        tr.children[3].textContent = x.diff;
-        tr.children[4].textContent = signed(x.ev);
-        tr.children[4].dataset.tone = x.tone;
-        tr.querySelector('button').addEventListener('click', function () { compare.splice(i, 1); drawCompare(); });
-        cmpBody.appendChild(tr);
-      });
-    }
-    root.querySelector('[data-add]').addEventListener('click', function () {
-      if (!last) return;
-      var sel = form.elements.preset;
-      var label = sel.value ? sel.options[sel.selectedIndex].text.split(':')[0] : 'Προσφορά ' + (compare.length + 1);
-      compare.push({ label: label, type: last.type, nominal: last.nominal, real: last.real, diff: last.diff, ev: last.ev, tone: last.tone });
-      if (compare.length > 5) compare.shift();
-      drawCompare();
-      cmpWrap.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
-    });
-    root.querySelector('[data-clear]').addEventListener('click', function () { compare = []; drawCompare(); });
-
-    setType('deposit');
-    if (root.dataset.preset) { form.elements.preset.value = root.dataset.preset; applyPreset(root.dataset.preset); }
-    render();
-  }
-
   /* ---------- One-time reveals: verdict ring/bars + hero counters ---------- */
   function initReveals() {
     var verdict = document.querySelector('.verdict');
@@ -492,6 +287,79 @@
     if (footer) new IntersectionObserver(function (e) { footerVisible = e[0].isIntersecting; sync(); }).observe(footer);
   }
 
+
+  /* ---------- Glossary tooltips (first mention of each term in the article) ---------- */
+  var GLOSSARY = [
+    { re: /\bRTP\b/, title: 'RTP (Return to Player)', text: 'Το ποσοστό των πονταρισμάτων που επιστρέφει ένα παιχνίδι μακροπρόθεσμα. RTP 96% σημαίνει μέση απώλεια 4 € ανά 100 € πονταρίσματος.' },
+    { re: /στοιχηματισμ[^\s.,:;!?)]*/i, title: 'Στοιχηματισμός', text: 'Πόσες φορές πρέπει να ποντάρετε ένα μπόνους πριν μπορέσετε να κάνετε ανάληψη. Για παράδειγμα, 35x σε μπόνους 100 € σημαίνει 3.500 € τζίρο.' },
+    { re: /ΕΕΕΠ/, title: 'ΕΕΕΠ', text: 'Η Επιτροπή Εποπτείας και Ελέγχου Παιγνίων, η ελληνική αρχή που αδειοδοτεί και ελέγχει τα online καζίνο.' },
+    { re: /\bKYC\b/, title: 'KYC (Know Your Customer)', text: 'Η ταυτοποίηση με έγγραφα που ζητά κάθε αδειοδοτημένο καζίνο πριν από την πρώτη ανάληψη.' },
+    { re: /\bcashback\b/i, title: 'Cashback', text: 'Επιστροφή ενός ποσοστού των καθαρών απωλειών σας για μια περίοδο, ως μετρητά ή ως μπόνους.' },
+    { re: /e-wallets?/i, title: 'E-wallet', text: 'Ηλεκτρονικό πορτοφόλι όπως Skrill ή Neteller. Συνήθως η ταχύτερη μέθοδος ανάληψης.' },
+    { re: /συνεισφορά/i, title: 'Συνεισφορά παιχνιδιού', text: 'Το ποσοστό κάθε πονταρίσματος που μετράει στον στοιχηματισμό. Τα φρουτάκια μετράνε συνήθως 100%, τα επιτραπέζια 10%.' }
+  ];
+
+  function initGlossary() {
+    var root = document.querySelector('[data-toc-content]');
+    if (!root) return;
+    var pop = document.createElement('div');
+    pop.className = 'term-pop'; pop.id = 'term-pop'; pop.setAttribute('role', 'tooltip'); pop.hidden = true;
+    document.body.appendChild(pop);
+    var hideTimer = null;
+
+    function textNodes() {
+      var out = [];
+      var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode: function (n) {
+          return n.parentElement.closest('h2, h3, a, button, .author-box, .prose-meta, thead') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      while (w.nextNode()) out.push(w.currentNode);
+      return out;
+    }
+    GLOSSARY.forEach(function (term) {
+      var nodes = textNodes();
+      for (var i = 0; i < nodes.length; i++) {
+        var m = term.re.exec(nodes[i].nodeValue);
+        if (!m) continue;
+        var node = nodes[i];
+        var after = node.splitText(m.index);
+        after.splitText(m[0].length);
+        var btn = document.createElement('button');
+        btn.type = 'button'; btn.className = 'term'; btn.textContent = m[0];
+        btn.setAttribute('aria-describedby', 'term-pop');
+        btn._term = term;
+        after.parentNode.replaceChild(btn, after);
+        break;
+      }
+    });
+
+    function place(btn) {
+      clearTimeout(hideTimer);
+      pop.innerHTML = '';
+      var t = document.createElement('strong'); t.textContent = btn._term.title;
+      pop.appendChild(t); pop.append(btn._term.text);
+      pop.hidden = false;
+      var r = btn.getBoundingClientRect();
+      var w = pop.offsetWidth;
+      var left = Math.min(Math.max(8, r.left + r.width / 2 - w / 2), document.documentElement.clientWidth - w - 8);
+      var top = r.bottom + 8;
+      if (top + pop.offsetHeight > window.innerHeight - 8) top = r.top - pop.offsetHeight - 8;
+      pop.style.left = (left + window.scrollX) + 'px';
+      pop.style.top = (top + window.scrollY) + 'px';
+    }
+    function hide() { hideTimer = setTimeout(function () { pop.hidden = true; }, 120); }
+    root.querySelectorAll('.term').forEach(function (b) {
+      b.addEventListener('mouseenter', function () { place(b); });
+      b.addEventListener('focus', function () { place(b); });
+      b.addEventListener('click', function () { if (pop.hidden) place(b); else pop.hidden = true; });
+      b.addEventListener('mouseleave', hide);
+      b.addEventListener('blur', hide);
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') pop.hidden = true; });
+    window.addEventListener('scroll', function () { if (!pop.hidden && !document.activeElement.classList.contains('term')) pop.hidden = true; }, { passive: true });
+  }
+
   /* ---------- Footer year ---------- */
   function initYear() {
     document.querySelectorAll('[data-year]').forEach(function (el) {
@@ -500,14 +368,14 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    initBurger();
+    initNav();
     initToc();
     initYear();
     initScrollUi();
     initReadTime();
     initFilters();
-    initBonusCalc();
     initReveals();
     initStickyCta();
+    initGlossary();
   });
 })();

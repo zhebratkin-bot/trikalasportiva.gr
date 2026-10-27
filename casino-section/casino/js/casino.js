@@ -360,6 +360,7 @@
     window.addEventListener('scroll', function () { if (!pop.hidden && !document.activeElement.classList.contains('term')) pop.hidden = true; }, { passive: true });
   }
 
+
   /* ---------- Footer year ---------- */
   function initYear() {
     document.querySelectorAll('[data-year]').forEach(function (el) {
